@@ -2,9 +2,10 @@ import pickle
 
 import matplotlib.pyplot as plt
 import numpy as np
+from tqdm.auto import tqdm
+
 import quantumBasicVotingGame as vg
 from quantumShapEstimation import QuantumShapleyWrapper as qsw
-from tqdm.auto import tqdm
 
 # NOTE: 定义常量
 
@@ -30,7 +31,7 @@ simulations = {}
 
 # NOTE: 第1层循环：执行numTrials次模拟
 for trialNum in tqdm(range(numTrials), desc="Current Trial"):
-    # NOTE: 第2层循环：测试不同积分分段数
+    # NOTE: 第2层循环：测试不同积分分段数ell
     for ell in tqdm(range(1, maxEll), desc="Current Ell"):
         # NOTE: 第3层循环：遍历三个条件（玩家数量、阈值位数、粗略方差）。
         for n, thresholdBits, roughVariance in zip(
