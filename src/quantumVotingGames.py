@@ -64,6 +64,7 @@ with open("shapleyVoteResults.pkl", "wb") as f:
 
 
 def totalAbsError(qshaps, cshaps) -> float:
+
     err = 0
     for qshap, cshap in zip(qshaps, cshaps):
         err += abs(qshap - cshap)

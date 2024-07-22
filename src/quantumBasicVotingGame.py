@@ -1,14 +1,16 @@
-import matplotlib.pyplot as plt
+from typing import Optional
+
 import numpy as np
-from qiskit import Aer, QuantumCircuit, transpile
+from qiskit import QuantumCircuit
 from qiskit.circuit.library import MCXGate
-from tqdm import tqdm
 
 from quantumShapEstimation import QuantumShapleyWrapper as qsw
 from shapExampleGenerator import SHAPGenerator
 
 
-def constructPlusOneGate(numBits: int, numControls: int = 0, name: str = None):
+def constructPlusOneGate(
+    numBits: int, numControls: int = 0, name: Optional[str] = None
+):
     """
     Gate Structure:
         [Controls] + [Input]
@@ -36,7 +38,7 @@ def constructPlusOneGate(numBits: int, numControls: int = 0, name: str = None):
 
 
 def constructFixedAdditionGate(
-    numBits: int, increment: int, numControls: int = 0, name: str = None
+    numBits: int, increment: int, numControls: int = 0, name: Optional[str] = None
 ):
     if name is None:
         name = f"+{increment}"
@@ -58,7 +60,9 @@ def constructFixedAdditionGate(
         return circuit.to_gate()
 
 
-def randomVotingGame(numPlayers: int, thresholdBits: int, roughVariance: int = 1):
+def randomVotingGame(
+    numPlayers: int, thresholdBits: int, roughVariance: int = 1
+) -> list[int]:
     """分配每个玩家的票数
 
     Args:
@@ -120,36 +124,39 @@ def randomVotingGameGate(thresholdBits: int, playerVal: list[float]):
 
 
 def classicalVotingShap(threshold: int, playerVals: list[int]) -> list[float]:
-    # Sorry for the nested function, better than writing this as a lambda funciton
 
-    # Start of nested funciton
-    def intToCoalitionValue(coalition: int) -> float:
-        # A function which takes integer encodings of coalitions
-        # and outputs their values in a voting game
+    def intToCoalitionValue(coalition: int) -> int:
+        """用coalition表示投票情况，将其看作一个二进制数，第j位为1代表第j个玩家投票。
+        第j个玩家投票则累加票数，最后统计总票数是否达到阈值，达到则代表价值函数为1。
+
+        Args:
+            coalition: 整数，二进制形式表示投票情况。
+            高位表示playerVals索引小的玩家。
+            举例（从0计数）："0010"，第1位为1，表示playerVals[2]的票数要累加。
+
+        Returns:
+            价值函数。
+        """
         votes = 0
         for j in range(len(playerVals)):
             jthPlayerOn = (coalition & (1 << j)) > 0
             if jthPlayerOn:
-                # Add player value, Note: endian-ness gets reversed
                 votes += playerVals[len(playerVals) - j - 1]
 
-        return 1 if votes >= threshold else 0
+        return int(1) if votes >= threshold else int(0)
 
-    # End of nested function
-
-    # Calculate coalition values
     coalitionValues = SHAPGenerator.lambdaGenerateContributions(
         numFactors=len(playerVals), generator=intToCoalitionValue
     )
 
-    # Calculate shapley values
     sg = SHAPGenerator(
         numFactors=len(playerVals),
-        rangeMin=0,
-        rangeMax=1,
+        rangeMin=int(0),
+        rangeMax=int(1),
         contributions=coalitionValues,
     )
     shapleyValues = []
+    # 计算每个人的Shapley。
     for i in range(len(playerVals)):
         shapleyValues.append(sg.computeShap(i))
 
