@@ -1,6 +1,6 @@
-import random as rand
+import math
+import random
 from functools import cache
-from math import comb
 from typing import Callable, Dict, List, Optional, Union
 
 import numpy as np
@@ -33,15 +33,23 @@ class SHAPGenerator:
             bits = self.__subsetIndexToBin(i)
 
             # Map binary string to random contribution
-            contributions[bits] = rand.randrange(rangeMin, rangeMax)
+            contributions[bits] = random.randrange(rangeMin, rangeMax)
 
         return contributions
 
-    def __subsetIndexToBin(self, subset: int, numbits: Optional[int] = None):
+    def __subsetIndexToBin(self, subset: int, numbits: Optional[int] = None) -> str:
+        """整数表示的集合转化为二进制字符串
+
+        Args:
+            subset: 整数表示的集合。
+            numbits: 二进制位数，若为None则默认为玩家人数。
+
+        Returns:
+            表示集合的二进制字符串。
+        """
         if numbits is None:
             numbits = self.__numFactors
 
-        # Convert subset to binary string
         bits = ""
         for j in range(numbits):
             bits = str((subset & (1 << j)) >> j) + bits
@@ -49,6 +57,13 @@ class SHAPGenerator:
 
     @staticmethod
     def __subsetSize(subset: str):
+        """通过统计集合中1的个数计算子集大小。
+
+        Args:
+            subset: 二进制字符串表示的子集。
+        Returns:
+            子集大小。
+        """
         size = 0
         for i in range(len(subset)):
             size += int(subset[i])
@@ -72,26 +87,23 @@ class SHAPGenerator:
     def computeShap(self, targetFactor: int) -> float:
         shap = 0
 
-        subsetsExcludingT = self.__numSubsets >> 1
-        # For all subsets not including the target factor
-        for i in range(subsetsExcludingT):
-            # Convert to a binary string
+        numSubsetsExcludingT = self.__numSubsets >> 1
+        # 枚举所有不包括targetFactor的集合
+        for i in range(numSubsetsExcludingT):
             strI = self.__subsetIndexToBin(i, self.__numFactors - 1)
-
-            # Subset
+            # V(S)
             subset = strI[:targetFactor] + "0" + strI[targetFactor:]
-            # Subset union target
-            subsetUt = strI[:targetFactor] + "1" + strI[targetFactor:]
-
-            # Determine subset size
+            # S ∪ {i}
+            subsetUnioned = strI[:targetFactor] + "1" + strI[targetFactor:]
             sSize = self.__subsetSize(subset)
 
-            # Calculate coefficient
-            shapCoef = 1 / (comb(self.__numFactors - 1, sSize) * (self.__numFactors))
+            # 系数γ(n,m)
+            shapCoef = 1 / (
+                math.comb(self.__numFactors - 1, sSize) * (self.__numFactors)
+            )
 
-            # Add to shapvalue
             shap += shapCoef * (
-                self.__contributions[subsetUt] - self.__contributions[subset]
+                self.__contributions[subsetUnioned] - self.__contributions[subset]
             )
 
         return shap
