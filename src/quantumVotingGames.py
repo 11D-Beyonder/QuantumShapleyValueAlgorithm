@@ -5,7 +5,6 @@ import numpy as np
 from tqdm.auto import tqdm
 
 import quantumBasicVotingGame as vg
-from quantumShapEstimation import QuantumShapleyWrapper as qsw
 
 # NOTE: 定义常量
 
@@ -37,7 +36,7 @@ for trialNum in tqdm(range(numTrials), desc="Current Trial"):
         for n, thresholdBits, roughVariance in zip(
             numPlayersCond, thresholdBitCond, roughVarianceCond
         ):
-            # 一个实验单元trial
+            # 一个实验单元trial [人数，积分段数，模拟次序]
             trial = (n, ell, trialNum)
             # 阈值
             threshold = 2 ** (thresholdBits - 1)
@@ -64,20 +63,20 @@ with open("shapleyVoteResults.pkl", "wb") as f:
     pickle.dump(simulations, f)
 
 
-def meanAbsError(qshaps, cshaps):
+def totalAbsError(qshaps, cshaps) -> float:
     err = 0
     for qshap, cshap in zip(qshaps, cshaps):
         err += abs(qshap - cshap)
     return err
 
 
+# NOTE: 不同玩家数一张子图，
+# 横轴为积分分段数，
+# 纵轴为绝对值误差平均值的倒数。
 plt.rcParams["figure.figsize"] = [12, 5]
 fig, ax = plt.subplots(1, len(numPlayersCond))
 
-# We're looking to find reciprocal mean abs error per trial
-# For each trial with n players
 for i, n in enumerate(numPlayersCond):
-    # Orient data
     resultsX = []
     resultsY = []
     resultErr = []
@@ -86,21 +85,17 @@ for i, n in enumerate(numPlayersCond):
 
         for trialNum in range(numTrials):
             qshaps, cshaps = simulations[(n, ell, trialNum)]
-            trialOutcomes.append(meanAbsError(qshaps, cshaps))
+            trialOutcomes.append(totalAbsError(qshaps, cshaps))
 
         trialOutcomes = np.array(trialOutcomes)
         resultsX.append(ell)
         resultsY.append(trialOutcomes.mean())
         resultErr.append(trialOutcomes.std())
 
-        # resultsX += len(trialOutcomes) * [ell]
-        # resultsY += trialOutcomes
-
-    ax[i].set_title(f"{n} Players")  # , Threshold: {2**thresholdBitCond[i]}")
+    ax[i].set_title(f"{n} Players")
     ax[i].bar(
         np.array(resultsX),
         1 / np.array(resultsY),
-        # yerr=resultErr,
         align="center",
         alpha=0.5,
         ecolor="black",
