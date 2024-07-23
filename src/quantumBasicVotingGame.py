@@ -4,7 +4,7 @@ import numpy as np
 from qiskit import QuantumCircuit
 from qiskit.circuit.library import MCXGate
 
-from quantumShapEstimation import QuantumShapleyWrapper as qsw
+from quantumShapEstimation import QuantumShapleyWrapper
 from shapExampleGenerator import SHAPGenerator
 
 
@@ -102,14 +102,17 @@ def randomVotingGame(
     return list(playerVotingPower)
 
 
-def randomVotingGameGate(thresholdBits: int, playerVal: list[float]):
+def randomVotingGameGate(thresholdBits: int, playerVal: list[int]):
+    # 文中Pl寄存器
     playerReg = np.arange(len(playerVal)).tolist()
+    # 文中Aux寄存器
     voteReg = np.arange(len(playerVal), len(playerVal) + thresholdBits).tolist()
     allReg = playerReg + voteReg
     utilityReg = [len(playerVal)]
-
     circuit = QuantumCircuit(len(playerReg) + len(voteReg))
 
+    # NOTE: 构造加投票的受控门：
+    # 玩家比特为控制位，Aux寄存器中比特可以加上1
     for player in playerReg:
         circuit.append(
             constructFixedAdditionGate(len(voteReg), playerVal[player], 1),
@@ -168,16 +171,18 @@ def quantumVotingShap(
     playerVals: list[int],
     ell: int = 2,
 ) -> list[float]:
-    """Uses quantum circuit to estimate shapley values of voting game
+    """使用量子算法计算每个玩家的夏普利值。
 
     Args:
-        threshold (int): Number of votes needed for a successful vote.
-          Make sure threshold is a power of 2 - since I was lazy with the circuit.
-        playerVals (list[int]): The number of votes attributed to each player.
+        threshold (int): 决策执行的票数下限，为了简化这里必须保证是2的幂。
+        playerVals (list[int]): 每个玩家的票数。
+        ell (int): 积分的分段数。
 
     Returns:
-        list[float]: List of Shapley values of players
+        list[float]: 每个玩家的夏普利值。
     """
+
+    # NOTE: 最高位为1则代表达到阈值
     thresholdBits = int(np.floor(np.log2(threshold)) + 1)
 
     gate, playerReg, utilityReg, allReg = randomVotingGameGate(
@@ -185,15 +190,16 @@ def quantumVotingShap(
         playerVal=playerVals,
     )
 
-    votingQShapWrapper = qsw(
+    votingQShapWrapper = QuantumShapleyWrapper(
         gate=gate, factorIndices=playerReg, outputIndices=utilityReg, fullIndices=allReg
     )
 
-    numPlayers = len(playerVals)
-    qshaps = numPlayers * [0]
-    for i in range(numPlayers):
-        qshaps[i] = votingQShapWrapper.approxShap(
-            i, rangeMin=0, rangeMax=1, betaApproxBits=ell, directProb=True
+    qshaps = []
+    for i in range(len(playerVals)):
+        qshaps.append(
+            votingQShapWrapper.approxShap(
+                i, rangeMin=0, rangeMax=1, betaApproxBits=ell, directProb=True
+            )
         )
 
     return qshaps

@@ -9,9 +9,9 @@ import quantumBasicVotingGame as vg
 # NOTE: 定义常量
 
 # 模拟次数
-numTrials = 128
+numTrials = 20
 # 积分的分段数
-maxEll = 11
+maxEll = 7
 
 # NOTE: 定义不同的情况
 
