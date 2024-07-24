@@ -19,7 +19,7 @@ from qiskit.circuit import QuantumCircuit
 from qiskit.circuit.gate import Gate
 from qiskit.circuit.library import QFT
 
-import gameProcesser as qvg
+import gameProcessor as qvg
 from quantumShapEstimation import QuantumShapleyWrapper as qsw
 
 # #### Definitions

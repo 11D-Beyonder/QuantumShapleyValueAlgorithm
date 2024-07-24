@@ -72,8 +72,12 @@ def constructFixedAdditionGate(
 
     circuit = QuantumCircuit(numBits, name=name)
 
+    # NOTE: increment某一位为1,则在该位上构造一个加1的门。
+    # numBits-bit 表示从哪里开始考虑进位。
+    # ---
+    # 这里其实是一步优化，最朴素的做法是做
+    # `increment`次`constructPlusOneGate(numBits=numBits)`
     for bit in range(numBits):
-        # NOTE: increment某一位为1,则在该位上构造一个加1的门。
         if increment & (1 << bit) != 0:
             gate = constructPlusOneGate(numBits - bit)
             circuit.append(gate, [i for i in range(numBits - bit)])

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from tqdm.auto import tqdm
 
-import gameProcesser as processer
+import gameProcessor as processer
 
 # NOTE: 定义常量
 
