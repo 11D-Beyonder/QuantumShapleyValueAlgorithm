@@ -24,13 +24,27 @@ def constructPlusOneGate(
             name = f"c({numControls}){name}"
     circuit = QuantumCircuit(numBits, name=name)
 
-    # build circuit
+    # NOTE: 电路形如
+    #      ┌───┐
+    # q_0: ┤ X ├──────────
+    #      └─┬─┘┌───┐
+    # q_1: ──■──┤ X ├─────
+    #        │  └─┬─┘┌───┐
+    # q_2: ──■────■──┤ X ├
+    #                └───┘
+    # 当所有的MCXGate和最后的X门结合起来时，
+    # 它们共同实现了一个量子比特串的加一操作。
+    # 如果量子比特串的初始状态表示一个数值，
+    # 应用这个量子电路后，数值会增加1。
+    # 举例：
+    # - |111⟩ -> |000⟩
+    # - |101⟩ -> |110⟩
+
     for i in range(numBits - 1):
-        mcx = MCXGate(numBits - i - 1)
+        mcx: MCXGate = MCXGate(numBits - i - 1)
         circuit.append(mcx, [j for j in range(numBits - 1, i - 1, -1)])
     circuit.x(numBits - 1)
 
-    # convert circuit to gate and return
     if numControls > 0:
         return circuit.to_gate().control(numControls)
     else:
@@ -40,6 +54,17 @@ def constructPlusOneGate(
 def constructFixedAdditionGate(
     numBits: int, increment: int, numControls: int = 0, name: Optional[str] = None
 ):
+    """构造增加票数的门。
+
+    Args:
+        numBits: 票数寄存器的比特数。
+        increment: 需要增加的票数。
+        numControls: 控制位的比特数。
+        name: 门的名称。
+
+    Returns:
+        若numControls不为0,则返回一个受控门，否则返回一个普通的门。
+    """
     if name is None:
         name = f"+{increment}"
         if numControls > 0:
@@ -48,19 +73,42 @@ def constructFixedAdditionGate(
     circuit = QuantumCircuit(numBits, name=name)
 
     for bit in range(numBits):
+        # NOTE: increment某一位为1,则在该位上构造一个加1的门。
         if increment & (1 << bit) != 0:
             gate = constructPlusOneGate(numBits - bit)
-            circuit.append(gate, [i for i in range(0, numBits - bit)])
+            circuit.append(gate, [i for i in range(numBits - bit)])
 
-    # print(circuit.draw())
-    # convert circuit to gate and return
     if numControls > 0:
         return circuit.to_gate().control(numControls)
     else:
         return circuit.to_gate()
 
 
-def randomVotingGame(
+def randomVotingGameGate(thresholdBits: int, playerVal: list[int]):
+    # 文中Pl寄存器
+    playerReg = np.arange(len(playerVal)).tolist()
+    # 文中Aux寄存器
+    voteReg = np.arange(len(playerVal), len(playerVal) + thresholdBits).tolist()
+    allReg = playerReg + voteReg
+    utilityReg = [len(playerVal)]
+    circuit = QuantumCircuit(len(playerReg) + len(voteReg))
+
+    # NOTE: 构造加投票的受控门：
+    # 玩家比特为控制位，Aux寄存器中比特可以加上对应的票数。
+    for player in playerReg:
+        circuit.append(
+            constructFixedAdditionGate(len(voteReg), playerVal[player], 1),
+            [player] + voteReg,
+        )
+
+    # temp:
+    print(circuit.draw())
+    #:temp
+
+    return circuit.to_gate(), playerReg, utilityReg, allReg
+
+
+def generateRandomGame(
     numPlayers: int, thresholdBits: int, roughVariance: int = 1
 ) -> list[int]:
     """分配每个玩家的票数
@@ -100,30 +148,6 @@ def randomVotingGame(
         np.random.shuffle(randomOrderPlayers)
 
     return list(playerVotingPower)
-
-
-def randomVotingGameGate(thresholdBits: int, playerVal: list[int]):
-    # 文中Pl寄存器
-    playerReg = np.arange(len(playerVal)).tolist()
-    # 文中Aux寄存器
-    voteReg = np.arange(len(playerVal), len(playerVal) + thresholdBits).tolist()
-    allReg = playerReg + voteReg
-    utilityReg = [len(playerVal)]
-    circuit = QuantumCircuit(len(playerReg) + len(voteReg))
-
-    # NOTE: 构造加投票的受控门：
-    # 玩家比特为控制位，Aux寄存器中比特可以加上1
-    for player in playerReg:
-        circuit.append(
-            constructFixedAdditionGate(len(voteReg), playerVal[player], 1),
-            [player] + voteReg,
-        )
-
-    # temp:
-    print(circuit.draw())
-    #:temp
-
-    return circuit.to_gate(), playerReg, utilityReg, allReg
 
 
 def classicalVotingShap(threshold: int, playerVals: list[int]) -> list[float]:
@@ -211,7 +235,7 @@ def main():
 
     threshold = 2 ** (thresholdBits - 1)
 
-    rvgArray = randomVotingGame(
+    rvgArray = generateRandomGame(
         numPlayers=numPlayers,
         thresholdBits=thresholdBits,
         roughVariance=2,

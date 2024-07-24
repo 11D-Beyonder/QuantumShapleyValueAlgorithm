@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from tqdm.auto import tqdm
 
-import quantumBasicVotingGame as vg
+import gameProcesser as processer
 
 # NOTE: 定义常量
 
@@ -41,17 +41,17 @@ for trialNum in tqdm(range(numTrials), desc="Current Trial"):
             # 阈值
             threshold = 2 ** (thresholdBits - 1)
             # 生成随机游戏
-            playerVals = vg.randomVotingGame(
+            playerVals = processer.generateRandomGame(
                 numPlayers=n, thresholdBits=thresholdBits, roughVariance=roughVariance
             )
 
             # 量子计算
-            qshaps = vg.quantumVotingShap(
+            qshaps = processer.quantumVotingShap(
                 threshold=threshold, playerVals=playerVals, ell=ell
             )
 
             # 经典计算
-            cshaps = vg.classicalVotingShap(
+            cshaps = processer.classicalVotingShap(
                 threshold=threshold,
                 playerVals=playerVals,
             )
