@@ -88,26 +88,42 @@ def constructFixedAdditionGate(
         return circuit.to_gate()
 
 
-def randomVotingGameGate(thresholdBits: int, playerVal: list[int]):
+def randomVotingGameGate(thresholdBits: int, playerVals: list[int]):
+    """构造加票数的门，每个玩家作为一个控制比特。
+    q_0: ─────■────────────────
+              │
+    q_1: ─────┼──────────■─────
+         ┌────┴────┐┌────┴────┐
+    q_2: ┤0        ├┤0        ├
+         │         ││         │
+    q_3: ┤1 c(1)+1 ├┤1 c(1)+3 ├
+         │         ││         │
+    q_4: ┤2        ├┤2        ├
+         └─────────┘└─────────┘
+    Args:
+        thresholdBits: 表示票数下限的比特数。
+        playerVal: 各玩家的票数。
+
+    Returns:
+        加票数的门，玩家寄存器（Pl），票数寄存器（Aux）。
+    """
     # 文中Pl寄存器
-    playerReg = np.arange(len(playerVal)).tolist()
+    playerReg: list[int] = np.arange(len(playerVals)).tolist()
     # 文中Aux寄存器
-    voteReg = np.arange(len(playerVal), len(playerVal) + thresholdBits).tolist()
+    voteReg = np.arange(len(playerVals), len(playerVals) + thresholdBits).tolist()
     allReg = playerReg + voteReg
-    utilityReg = [len(playerVal)]
+    # HACK: 文中的辅助比特寄存器，不应该是len(playerVal)+thresholdBits+1吗？
+    utilityReg = [len(playerVals)]
     circuit = QuantumCircuit(len(playerReg) + len(voteReg))
 
     # NOTE: 构造加投票的受控门：
     # 玩家比特为控制位，Aux寄存器中比特可以加上对应的票数。
+
     for player in playerReg:
         circuit.append(
-            constructFixedAdditionGate(len(voteReg), playerVal[player], 1),
+            constructFixedAdditionGate(len(voteReg), playerVals[player], 1),
             [player] + voteReg,
         )
-
-    # temp:
-    print(circuit.draw())
-    #:temp
 
     return circuit.to_gate(), playerReg, utilityReg, allReg
 
@@ -215,7 +231,7 @@ def quantumVotingShap(
 
     gate, playerReg, utilityReg, allReg = randomVotingGameGate(
         thresholdBits=thresholdBits,
-        playerVal=playerVals,
+        playerVals=playerVals,
     )
 
     votingQShapWrapper = QuantumShapleyWrapper(

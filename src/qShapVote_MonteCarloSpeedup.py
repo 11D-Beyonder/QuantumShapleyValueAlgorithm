@@ -200,7 +200,7 @@ S0Circuit.draw()
 # SPsi Gate
 voteOracle, _, _, _ = qvg.randomVotingGameGate(
     thresholdBits=numVoteBits,
-    playerVal=votingPowers,
+    playerVals=votingPowers,
 )
 voteOracle.label = "vOracle"
 voteOracleInverse = voteOracle.inverse()
