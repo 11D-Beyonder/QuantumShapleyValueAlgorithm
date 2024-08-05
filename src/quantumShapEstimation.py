@@ -45,13 +45,16 @@ class QuantumShapleyWrapper:
             fullIndices (list[int]): A list of all indices in the gate
         """
 
-        self.__gate = gate
-        self.__outputIndices = outputIndices
-        self.__factorIndices = factorIndices
-        self.__fullIndices = fullIndices
+        self.__gate = gate  # 加权的电路
+        self.__outputIndices = outputIndices  # utility_reg
+        self.__factorIndices = factorIndices  # player_reg
+        self.__fullIndices = fullIndices  # player_reg+vote_reg
 
     def getShapCircuit(
-        self, targetFactor: int, betaApproxBits: int = None, targetOn: int = True
+        self,
+        targetFactor: int,
+        betaApproxBits: Optional[int] = None,
+        targetOn: bool = True,
     ) -> QuantumCircuit:
 
         # Init number of beta approximation bits
@@ -72,20 +75,27 @@ class QuantumShapleyWrapper:
     ) -> dict[Registers, list[int]]:
         regDict = {}
 
+        # NOTE: 整个电路再叠上一层区间寄存器。
+
         # 文中Pt，区间寄存器。
         regDict[Registers.aux] = [i for i in range(betaApproxBits)]
+
         regDict[Registers.full] = [i + betaApproxBits for i in self.__fullIndices]
-        # 文中Pl，玩家寄存器。
+
+        # 玩家寄存器。
         regDict[Registers.factors] = [i + betaApproxBits for i in self.__factorIndices]
+        # 除去target的玩家
         regDict[Registers.otherFac] = [
             i
             for i in regDict[Registers.factors]
             if i != regDict[Registers.factors][targetFactor]
         ]
+        # target玩家
         regDict[Registers.targetFac] = [regDict[Registers.factors][targetFactor]]
+
         regDict[Registers.output] = [i + betaApproxBits for i in self.__outputIndices]
         regDict[Registers.full] = [i + betaApproxBits for i in self.__fullIndices]
-        # 猜测是振幅估计的比特
+        # TODO: 猜测是振幅估计的比特
         regDict[Registers.ampEst] = [
             i + betaApproxBits + len(self.__fullIndices) for i in range(ampEstBits)
         ]
@@ -186,7 +196,6 @@ class QuantumShapleyWrapper:
         if betaApproxBits is None:
             betaApproxBits = int(np.ceil(np.log2(len(self.__factorIndices))))
         reg = self.getRegisters(targetFactor, betaApproxBits)
-
         probs = 2 * [0]
         counts = 2 * [0]
         for toggle in [self.ON, self.OFF]:

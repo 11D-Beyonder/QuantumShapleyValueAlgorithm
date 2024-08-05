@@ -25,14 +25,23 @@ class SHAPGenerator:
             self.__contributions = contributions
 
     def __generateContributions(self, rangeMin: int, rangeMax: int) -> dict[str, int]:
-        # Declaring Variables
+        """生成子集的贡献。
+
+        Args:
+            rangeMin: 贡献最小值。
+            rangeMax: 贡献最大值。
+
+        Returns:
+            返回一个字典，表示为 {子集二进制字符串:贡献}。
+        """
+        # 00..0 的贡献显然是0。
         contributions = {self.__numFactors * "0": 0}
 
-        # For each subset
+        # 枚举子集
         for i in range(1, self.__numSubsets):
             bits = self.__subsetIndexToBin(i)
 
-            # Map binary string to random contribution
+            # 随机生成每个子集的贡献。
             contributions[bits] = random.randrange(rangeMin, rangeMax)
 
         return contributions
