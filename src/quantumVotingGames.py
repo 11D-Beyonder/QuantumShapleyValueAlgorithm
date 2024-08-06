@@ -16,7 +16,7 @@ maxEll = 7
 # NOTE: 定义不同的情况
 
 # 玩家数量
-numPlayersCond = [2, 4, 8]
+numPlayersCond = [3, 4, 8]
 # 阈值位数
 thresholdBitCond = [3, 4, 5]
 # 粗略方差

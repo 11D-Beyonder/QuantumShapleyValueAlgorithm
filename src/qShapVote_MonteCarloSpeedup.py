@@ -16,10 +16,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from qiskit import Aer, transpile
 from qiskit.circuit import QuantumCircuit
-from qiskit.circuit.gate import Gate
 from qiskit.circuit.library import QFT
 
-import gameProcessor as qvg
+import gameProcessor
 from quantumShapEstimation import QuantumShapleyWrapper as qsw
 
 # #### Definitions
@@ -67,7 +66,7 @@ print(f"{amplitudeReg= }")
 # In[123]:
 
 
-votingPowers = qvg.generateRandomGame(
+votingPowers = gameProcessor.generateRandomGame(
     numPlayers=numVoters,
     thresholdBits=numVoteBits,
     roughVariance=2,
@@ -198,7 +197,7 @@ S0Circuit.draw()
 
 
 # SPsi Gate
-voteOracle, _, _, _ = qvg.randomVotingGameGate(
+voteOracle, _, _, _ = gameProcessor.randomVotingGameGate(
     thresholdBits=numVoteBits,
     playerVals=votingPowers,
 )

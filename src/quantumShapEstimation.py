@@ -57,11 +57,10 @@ class QuantumShapleyWrapper:
         targetOn: bool = True,
     ) -> QuantumCircuit:
 
-        # Init number of beta approximation bits
         if betaApproxBits is None:
             betaApproxBits = int(np.ceil(np.log2(len(self.__factorIndices))))
 
-        # Get registers
+        # WARN: 在approxShap开头已经调用过。
         registers = self.getRegisters(targetFactor, betaApproxBits)
 
         # Construct the circuit
@@ -107,6 +106,7 @@ class QuantumShapleyWrapper:
     def initBetaApproxBits(auxReg: list[int], circuit: QuantumCircuit) -> None:
         L = 2 ** len(auxReg)
 
+        # QUES: 同文中推导不一致。
         auxWeights = np.arange(L)
         auxWeights = np.sin(np.pi * (2 * auxWeights + 1) / (2 * L))
         auxWeights = auxWeights / np.sum(auxWeights)
@@ -133,11 +133,11 @@ class QuantumShapleyWrapper:
 
         circuit = QuantumCircuit(len(auxReg) + len(factorsReg), name="Shap Factor Init")
 
-        # Initializing Target Factor Qubit
+        # QUES: 为什么要分On和Off两种情况？
         if targetOn:
             circuit.x(targetFacReg)
 
-        # Initializing Other Factor Qubits
+        # 构造R门
         for factorQubit in otherFacReg:
             circuit.ry(np.pi / (2 ** (betaApproxBits + 1)), factorQubit)
             for k, auxQubit in enumerate(auxReg):
@@ -150,30 +150,26 @@ class QuantumShapleyWrapper:
     def initShapley(
         self, targetFactor: int, betaApproxBits: int, targetOn: bool = True
     ) -> QuantumCircuit:
-        """This function returns a gate which prepares a circuit to have probability
-        amplitudes corresponding to Shapley coefficients.
+        """该函数返回一个门，该门使电路具有与沙普利系数相对应的概率幅值。
 
         Args:
-            numFactors (int): The number of total factors of a system
-            targetFactor (int): The factor of interest
-            auxBits (int): The resolution of our beta function approximation, will
-                be forced nearest power of 2 greater than L
+            targetFactor (int): 要计算夏普利值的玩家。
         """
-        # Define Registers
+
+        # WARN: 在approxShap开头已经调用过
         regDict = self.getRegisters(targetFactor, betaApproxBits)
 
         factorBits = len(regDict[Registers.factors])
-        L = 2**betaApproxBits
 
-        # Create Circuit
+        # 创建电路对象，总比特数是betaApproxBits + self.__gate.num_qubits。
         circuit = QuantumCircuit(
             betaApproxBits + self.__gate.num_qubits, 1, name="SHAP State Init"
         )
 
-        # Initializing Aux Qubits
+        # 加载权重w_l(k)
         self.initBetaApproxBits(regDict[Registers.aux], circuit)
 
-        # Initializing Factors
+        # 主要是构造R门
         factorInitGate = self.getShapleyInitGate(
             betaApproxBits, factorBits, targetFactor, targetOn
         )
@@ -198,14 +194,12 @@ class QuantumShapleyWrapper:
         reg = self.getRegisters(targetFactor, betaApproxBits)
         probs = 2 * [0]
         counts = 2 * [0]
+        # QUES: 没有构造文中提供的U_w门，而是通过ON、OFF直接测量output。
+        # 可能与检查最高位有关？
         for toggle in [self.ON, self.OFF]:
-            # Initialize Circuit
             circuit = self.getShapCircuit(
                 targetFactor, betaApproxBits, toggle == self.ON
             )
-            # Measure Circuit Output
-            # if not directProb:
-            #    circuit.measure(reg[Registers.output], reg[Registers.classical])
 
             # Use Aer
             sim = Aer.get_backend("aer_simulator")
@@ -223,6 +217,7 @@ class QuantumShapleyWrapper:
             # Retrieve probs
             probs[toggle] = out_state.probabilities(reg[Registers.output])
             # Compensating for rounding errors:
+            # FIXME: 类型错误。
             probs[toggle][1] = max(0, min(1, probs[toggle][1]))
 
             counts[toggle] = np.random.binomial(numMeasurements, probs[toggle][1])
