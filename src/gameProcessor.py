@@ -112,7 +112,7 @@ def randomVotingGameGate(thresholdBits: int, playerVals: list[int]):
     # 文中Aux寄存器
     voteReg = np.arange(len(playerVals), len(playerVals) + thresholdBits).tolist()
     allReg = playerReg + voteReg
-    # HACK: 文中的辅助比特寄存器，不应该是len(playerVal)+thresholdBits+1吗？
+    # QUES: 文中的辅助比特寄存器，不应该是len(playerVal)+thresholdBits+1吗？
     utilityReg = [len(playerVals)]
     circuit = QuantumCircuit(len(playerReg) + len(voteReg))
 

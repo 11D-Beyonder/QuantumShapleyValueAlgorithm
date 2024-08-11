@@ -1,0 +1,85 @@
+<mxfile host="Electron" modified="2024-08-09T06:47:07.340Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.6.1 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="21TPKfz91-ZiLiQNrl2a" version="24.6.1" type="device">
+  <diagram name="第 1 页" id="iVmqSouz7S5gNH4-zsyX">
+    <mxGraphModel dx="1004" dy="652" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="1" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="vAKtf6WeWQvCWr8hgawV-1" value="quantumVotingShap" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="130" y="210" width="140" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="vAKtf6WeWQvCWr8hgawV-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Times New Roman;fontSize=14;" edge="1" parent="1" source="vAKtf6WeWQvCWr8hgawV-3" target="vAKtf6WeWQvCWr8hgawV-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vAKtf6WeWQvCWr8hgawV-3" value="&lt;span style=&quot;text-align: left; font-size: 14px;&quot;&gt;randomVotingGameGate&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="290" y="160" width="170" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="vAKtf6WeWQvCWr8hgawV-5" value="approxShap" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="290" y="260" width="170" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="vAKtf6WeWQvCWr8hgawV-6" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;fontFamily=Times New Roman;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="270" y="170" width="20" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="vAKtf6WeWQvCWr8hgawV-9" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;size=0.5;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="460" y="144" width="20" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="vAKtf6WeWQvCWr8hgawV-10" value="" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="480" y="136" width="180" height="290" as="geometry" />
+        </mxCell>
+        <mxCell id="vAKtf6WeWQvCWr8hgawV-11" value="ON/OFF" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontFamily=Times New Roman;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="535" y="140" width="70" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vAKtf6WeWQvCWr8hgawV-12" value="getShapCircuit" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="490" y="190" width="160" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="vAKtf6WeWQvCWr8hgawV-13" value="get&amp;nbsp;probabilities that the output qubit is 1.&lt;div style=&quot;font-size: 14px;&quot;&gt;\(p_{on}\) and \(p_{off}\)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="490" y="260" width="160" height="69" as="geometry" />
+        </mxCell>
+        <mxCell id="vAKtf6WeWQvCWr8hgawV-14" value="answer is (rangeMax-rangeMin)\(\times p_{on}-p_{off}\)" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="490" y="350" width="160" height="49" as="geometry" />
+        </mxCell>
+        <mxCell id="vAKtf6WeWQvCWr8hgawV-16" value="" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="690" y="110" width="170" height="195" as="geometry" />
+        </mxCell>
+        <mxCell id="vAKtf6WeWQvCWr8hgawV-17" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;fontFamily=Times New Roman;" vertex="1" parent="1">
+          <mxGeometry x="650" y="125" width="40" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="vAKtf6WeWQvCWr8hgawV-18" value="initBetaApproxBits" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="710" y="182" width="130" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="vAKtf6WeWQvCWr8hgawV-19" value="getShapleyInitGate" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Times New Roman;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="710" y="238" width="130" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="vAKtf6WeWQvCWr8hgawV-20" value="initShap" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontFamily=Times New Roman;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="740" y="118" width="70" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vAKtf6WeWQvCWr8hgawV-21" value="# Q1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=#6c8ebf;fillColor=#dae8fc;fontFamily=Times New Roman;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="410" y="130" width="50" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vAKtf6WeWQvCWr8hgawV-22" value="# Q2" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=#6c8ebf;fillColor=#dae8fc;fontFamily=Times New Roman;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="490" y="144" width="50" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vAKtf6WeWQvCWr8hgawV-23" value="# Q3" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=#6c8ebf;fillColor=#dae8fc;fontFamily=Times New Roman;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="710" y="152" width="50" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vAKtf6WeWQvCWr8hgawV-25" value="quantumBasicVotingGame.py" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fillColor=none;fontFamily=Comic Sans MS;fontSize=14;fontColor=#0066CC;" vertex="1" parent="1">
+          <mxGeometry x="205" y="88" width="210" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vAKtf6WeWQvCWr8hgawV-26" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;fontColor=#0066CC;labelBackgroundColor=#0066CC;strokeColor=#0066CC;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="130" y="118.95" as="sourcePoint" />
+            <mxPoint x="460" y="118.95" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vAKtf6WeWQvCWr8hgawV-28" value="quantumShapEstimation.py" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;fillColor=none;fontFamily=Comic Sans MS;fontSize=14;fontColor=#0066CC;" vertex="1" parent="1">
+          <mxGeometry x="560" y="70" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vAKtf6WeWQvCWr8hgawV-29" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;fontColor=#0066CC;labelBackgroundColor=#0066CC;strokeColor=#0066CC;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="480" y="100.94999999999999" as="sourcePoint" />
+            <mxPoint x="860" y="101" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -192,8 +192,8 @@ class QuantumShapleyWrapper:
         if betaApproxBits is None:
             betaApproxBits = int(np.ceil(np.log2(len(self.__factorIndices))))
         reg = self.getRegisters(targetFactor, betaApproxBits)
-        probs = 2 * [0]
-        counts = 2 * [0]
+        probs = []
+        counts = []
         # QUES: 没有构造文中提供的U_w门，而是通过ON、OFF直接测量output。
         # 可能与检查最高位有关？
         for toggle in [self.ON, self.OFF]:
@@ -217,7 +217,6 @@ class QuantumShapleyWrapper:
             # Retrieve probs
             probs[toggle] = out_state.probabilities(reg[Registers.output])
             # Compensating for rounding errors:
-            # FIXME: 类型错误。
             probs[toggle][1] = max(0, min(1, probs[toggle][1]))
 
             counts[toggle] = np.random.binomial(numMeasurements, probs[toggle][1])
