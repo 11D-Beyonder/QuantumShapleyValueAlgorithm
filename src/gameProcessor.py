@@ -1,6 +1,7 @@
 from typing import Optional
 
 import numpy as np
+from matplotlib import pyplot as plt
 from qiskit import QuantumCircuit
 from qiskit.circuit.library import MCXGate
 
@@ -124,6 +125,9 @@ def randomVotingGameGate(thresholdBits: int, playerVals: list[int]):
             constructFixedAdditionGate(len(voteReg), playerVals[player], 1),
             [player] + voteReg,
         )
+
+    circuit.draw("mpl")
+    plt.show()
 
     return circuit.to_gate(), playerReg, utilityReg, allReg
 
